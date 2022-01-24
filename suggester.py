@@ -43,7 +43,7 @@ def yellowOk(word, yellow):
 
 cnt = 0
 
-while True:
+while len(words) > 0:
     now = next(iter(words))
     if greenOk(now, green) and redOk(now, red) and yellowOk(now, yellow):
         print(now)
