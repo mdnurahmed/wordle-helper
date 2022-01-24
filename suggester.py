@@ -1,4 +1,3 @@
-import random
 from collections import defaultdict
 
 f = open('5-letter-words.txt', 'r')
@@ -12,9 +11,10 @@ f.close()
 
 
 green = defaultdict(int)  # exact position
-yellow = defaultdict(int)  # unknown position but the must have same frequency
+# unknown position but the letters must have same frequency
+yellow = defaultdict(int)
 red = set()  # cannot have these letters
-greenSet = set()
+greenSet = set()  # this set contains values of green dictionary
 
 
 def greenOk(word, green):
