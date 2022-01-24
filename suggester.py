@@ -35,7 +35,33 @@ def yellowOk(word, yellow):
     return True
 
 
-def find_suggestion(words):
+def process(nowSuggestion, green, red, yellow, greenSet):
+    if greenOk(nowSuggestion, green) and redOk(nowSuggestion, red) and yellowOk(nowSuggestion, yellow):
+        print(nowSuggestion)
+        feedback = list(input())
+        print(feedback)
+        # this part is crucial
+        newY = defaultdict(int)
+        for i in range(len(nowSuggestion)):
+            if feedback[i] == 'G':
+                green[i] = nowSuggestion[i]
+                greenSet.add(nowSuggestion[i])
+            if feedback[i] == 'Y':
+                newY[nowSuggestion[i]] += 1
+            if feedback[i] == 'R':
+                red.add(nowSuggestion[i])
+        for key in newY:
+            yellow[key] = max(yellow[key], newY[key])
+        for el in red:
+            if el in yellow or el in greenSet:
+                red.remove(el)
+        print(green)
+        print(yellow)
+        print(red)
+        v = input()
+
+
+def find_suggestion(process_first, words):
     green = defaultdict(int)  # exact position
     # unknowSuggestionn position but the letters must have same frequency
     yellow = defaultdict(int)
@@ -43,30 +69,11 @@ def find_suggestion(words):
     greenSet = set()  # this set contains values of green dictionary
     cnt = 0
     while len(words) > 0:
-        nowSuggestion = next(iter(words))
-        if greenOk(nowSuggestion, green) and redOk(nowSuggestion, red) and yellowOk(nowSuggestion, yellow):
-            print(nowSuggestion)
-            feedback = list(input())
-            print(feedback)
-            # this part is crucial
-            newY = defaultdict(int)
-            for i in range(len(nowSuggestion)):
-                if feedback[i] == 'G':
-                    green[i] = nowSuggestion[i]
-                    greenSet.add(nowSuggestion[i])
-                if feedback[i] == 'Y':
-                    newY[nowSuggestion[i]] += 1
-                if feedback[i] == 'R':
-                    red.add(nowSuggestion[i])
-            for key in newY:
-                yellow[key] = max(yellow[key], newY[key])
-            for el in red:
-                if el in yellow or el in greenSet:
-                    red.remove(el)
-            # print(green)
-            # print(yellow)
-            # print(red)
-            # v = input()
+        if len(process_first) > 0:
+            nowSuggestion = tuple(process_first.pop())
+        else:
+            nowSuggestion = next(iter(words))
+        process(nowSuggestion, green, red, yellow, greenSet)
         words.remove(nowSuggestion)
         cnt += 1
         if cnt % 100 == 0:
@@ -76,5 +83,6 @@ def find_suggestion(words):
 if __name__ == "__main__":
     words = set()
     read_words(words)
-    find_suggestion(words)
+    process_first = []
+    find_suggestion(process_first, words)
     print("End of Code")
