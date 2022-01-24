@@ -55,10 +55,10 @@ def process(nowSuggestion, green, red, yellow, greenSet):
         for el in red:
             if el in yellow or el in greenSet:
                 red.remove(el)
-        print(green)
-        print(yellow)
-        print(red)
-        v = input()
+        # print(green)
+        # print(yellow)
+        # print(red)
+        # v = input()
 
 
 def find_suggestion(process_first, words):
