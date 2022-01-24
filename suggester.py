@@ -1,20 +1,14 @@
 from collections import defaultdict
 
-f = open('5-letter-words.txt', 'r')
-words = set()
-for line in f:
-    line_list = list(line)
-    line_list.pop()
-    words.add(tuple(line_list))
 
-f.close()
+def read_words(words):
+    f = open('5-letter-words.txt', 'r')
+    for line in f:
+        line_list = list(line)
+        line_list.pop()
+        words.add(tuple(line_list))
 
-
-green = defaultdict(int)  # exact position
-# unknown position but the letters must have same frequency
-yellow = defaultdict(int)
-red = set()  # cannot have these letters
-greenSet = set()  # this set contains values of green dictionary
+    f.close()
 
 
 def greenOk(word, green):
@@ -41,34 +35,46 @@ def yellowOk(word, yellow):
     return True
 
 
-cnt = 0
+def find_suggestion(words):
+    green = defaultdict(int)  # exact position
+    # unknowSuggestionn position but the letters must have same frequency
+    yellow = defaultdict(int)
+    red = set()  # cannot have these letters
+    greenSet = set()  # this set contains values of green dictionary
+    cnt = 0
+    while len(words) > 0:
+        nowSuggestion = next(iter(words))
+        if greenOk(nowSuggestion, green) and redOk(nowSuggestion, red) and yellowOk(nowSuggestion, yellow):
+            print(nowSuggestion)
+            feedback = list(input())
+            print(feedback)
+            # this part is crucial
+            newY = defaultdict(int)
+            for i in range(len(nowSuggestion)):
+                if feedback[i] == 'G':
+                    green[i] = nowSuggestion[i]
+                    greenSet.add(nowSuggestion[i])
+                if feedback[i] == 'Y':
+                    newY[nowSuggestion[i]] += 1
+                if feedback[i] == 'R':
+                    red.add(nowSuggestion[i])
+            for key in newY:
+                yellow[key] = max(yellow[key], newY[key])
+            for el in red:
+                if el in yellow or el in greenSet:
+                    red.remove(el)
+            # print(green)
+            # print(yellow)
+            # print(red)
+            # v = input()
+        words.remove(nowSuggestion)
+        cnt += 1
+        if cnt % 100 == 0:
+            print(f'{cnt} words seen')
 
-while len(words) > 0:
-    now = next(iter(words))
-    if greenOk(now, green) and redOk(now, red) and yellowOk(now, yellow):
-        print(now)
-        feedback = list(input())
-        print(feedback)
-        # this part is crucial
-        newY = defaultdict(int)
-        for i in range(len(now)):
-            if feedback[i] == 'G':
-                green[i] = now[i]
-                greenSet.add(now[i])
-            if feedback[i] == 'Y':
-                newY[now[i]] += 1
-            if feedback[i] == 'R':
-                red.add(now[i])
-        for key in newY:
-            yellow[key] = max(yellow[key], newY[key])
-        for el in red:
-            if el in yellow or el in greenSet:
-                red.remove(el)
-        # print(green)
-        # print(yellow)
-        # print(red)
-        # v = input()
-    words.remove(now)
-    cnt += 1
-    if cnt % 100 == 0:
-        print(f'{cnt} word seen')
+
+if __name__ == "__main__":
+    words = set()
+    read_words(words)
+    find_suggestion(words)
+    print("End of Code")
